@@ -1,22 +1,36 @@
 'use client';
 
+import { useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus } from 'lucide-react';
 import { KanbanColumn as KanbanColumnInterface } from '../interfaces/kanban-column.interface';
+import { Task } from '../interfaces/task.interface';
 import TaskCard from './TaskCard';
+import TaskModal from './TaskModal';
 import { getColumnColor } from '../utils/kanban.utils';
 
 type KanbanColumnProps = {
   column: KanbanColumnInterface;
+  onCreateTask: (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => void;
 };
 
-export default function KanbanColumn({ column }: KanbanColumnProps) {
+export default function KanbanColumn({ column, onCreateTask }: KanbanColumnProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
   });
 
   const taskIds = column.tasks.map(task => task.id);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="flex-1 min-w-80">
@@ -31,7 +45,10 @@ export default function KanbanColumn({ column }: KanbanColumnProps) {
               {column.tasks.length}
             </span>
           </div>
-          <button className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-xs transition-colors">
+          <button 
+            onClick={handleOpenModal}
+            className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-xs transition-colors"
+          >
             <Plus className="w-3 h-3" />
             Agregar tarea
           </button>
@@ -57,6 +74,13 @@ export default function KanbanColumn({ column }: KanbanColumnProps) {
           )}
         </div>
       </div>
+      
+      <TaskModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onCreateTask={onCreateTask}
+        columnStatus={column.id}
+      />
     </div>
   );
 } 
