@@ -52,7 +52,7 @@ export default function TaskModal({ isOpen, onClose, onCreateTask, columnStatus 
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Crear Nueva Tarea</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Crear nueva tarea</h2>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -72,7 +72,7 @@ export default function TaskModal({ isOpen, onClose, onCreateTask, columnStatus 
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Ingrese el título de la tarea"
+              placeholder="Título de la tarea"
               required
             />
           </div>
@@ -87,7 +87,7 @@ export default function TaskModal({ isOpen, onClose, onCreateTask, columnStatus 
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-              placeholder="Ingrese la descripción de la tarea"
+              placeholder="Descripción de la tarea"
               required
             />
           </div>
@@ -118,7 +118,7 @@ export default function TaskModal({ isOpen, onClose, onCreateTask, columnStatus 
               type="submit"
               className="flex-1 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
             >
-              Crear Tarea
+              Crear tarea
             </button>
           </div>
         </form>
