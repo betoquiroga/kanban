@@ -3,24 +3,40 @@
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus } from 'lucide-react';
+import { useState } from 'react';
 import { KanbanColumn as KanbanColumnInterface } from '../interfaces/kanban-column.interface';
+import { Task } from '../interfaces/task.interface';
 import TaskCard from './TaskCard';
+import AddTaskModal, { AddTaskFormData } from './AddTaskModal';
 import { getColumnColor } from '../utils/kanban.utils';
 
 type KanbanColumnProps = {
   column: KanbanColumnInterface;
+  onAddTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => void;
 };
 
-export default function KanbanColumn({ column }: KanbanColumnProps) {
+export default function KanbanColumn({ column, onAddTask }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
   });
 
+  const [open, setOpen] = useState(false);
+
   const taskIds = column.tasks.map(task => task.id);
 
+  const handleAddTask = (data: AddTaskFormData) => {
+    onAddTask({
+      title: data.title,
+      description: data.description,
+      dueDate: new Date(data.dueDate),
+      status: column.id,
+    });
+  };
+
   return (
-    <div className="flex-1 min-w-80">
-      <div className={`rounded-lg border-2 ${getColumnColor(column.id)} h-full flex flex-col`}>
+    <>
+      <div className="flex-1 min-w-80">
+        <div className={`rounded-lg border-2 ${getColumnColor(column.id)} h-full flex flex-col`}>
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between mb-2">
@@ -31,7 +47,10 @@ export default function KanbanColumn({ column }: KanbanColumnProps) {
               {column.tasks.length}
             </span>
           </div>
-          <button className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-xs transition-colors">
+          <button
+            onClick={() => setOpen(true)}
+            className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-xs transition-colors"
+          >
             <Plus className="w-3 h-3" />
             Agregar tarea
           </button>
@@ -56,7 +75,13 @@ export default function KanbanColumn({ column }: KanbanColumnProps) {
             </div>
           )}
         </div>
+        </div>
       </div>
-    </div>
+      <AddTaskModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onSubmit={handleAddTask}
+      />
+    </>
   );
-} 
+}
