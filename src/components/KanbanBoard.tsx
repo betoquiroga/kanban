@@ -19,7 +19,7 @@ import KanbanColumn from './KanbanColumn';
 import TaskCard from './TaskCard';
 
 export default function KanbanBoard() {
-  const { columns, loading, moveTask } = useKanban();
+  const { columns, loading, moveTask, createTask } = useKanban();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const sensors = useSensors(
@@ -118,7 +118,11 @@ export default function KanbanBoard() {
           <div className="flex gap-6 h-full overflow-x-auto">
             <SortableContext items={columns.map(col => col.id)}>
               {columns.map(column => (
-                <KanbanColumn key={column.id} column={column} />
+                <KanbanColumn
+                  key={column.id}
+                  column={column}
+                  onAddTask={createTask}
+                />
               ))}
             </SortableContext>
           </div>
