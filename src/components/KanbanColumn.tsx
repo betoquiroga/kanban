@@ -3,8 +3,12 @@
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus } from 'lucide-react';
+import { useState } from 'react'; // Added
 import { KanbanColumn as KanbanColumnInterface } from '../interfaces/kanban-column.interface';
 import TaskCard from './TaskCard';
+import TaskFormModal from './TaskFormModal'; // Added
+import { useKanban } from '../hooks/use-kanban.hook'; // Added
+import { TaskStatus } from '../types/task-status.type'; // Added
 import { getColumnColor } from '../utils/kanban.utils';
 
 type KanbanColumnProps = {
@@ -16,7 +20,23 @@ export default function KanbanColumn({ column }: KanbanColumnProps) {
     id: column.id,
   });
 
+  const { createTask } = useKanban(); // Added
+  const [isModalOpen, setIsModalOpen] = useState(false); // Added
+
   const taskIds = column.tasks.map(task => task.id);
+
+  const handleOpenModal = () => setIsModalOpen(true); // Added
+  const handleCloseModal = () => setIsModalOpen(false); // Added
+
+  const handleCreateTask = (formData: { title: string; description: string; dueDate: string; status: TaskStatus }) => { // Added
+    createTask({
+      title: formData.title,
+      description: formData.description,
+      dueDate: new Date(formData.dueDate), // Ensure dueDate is a Date object
+      status: formData.status,
+    });
+    // The useKanban hook's createTask should handle refreshing the task list
+  };
 
   return (
     <div className="flex-1 min-w-80">
@@ -31,7 +51,10 @@ export default function KanbanColumn({ column }: KanbanColumnProps) {
               {column.tasks.length}
             </span>
           </div>
-          <button className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-xs transition-colors">
+          <button
+            onClick={handleOpenModal} // Modified
+            className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-xs transition-colors"
+          >
             <Plus className="w-3 h-3" />
             Agregar tarea
           </button>
@@ -57,6 +80,13 @@ export default function KanbanColumn({ column }: KanbanColumnProps) {
           )}
         </div>
       </div>
+      {/* Modal Render */}
+      <TaskFormModal // Added
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleCreateTask}
+        initialStatus={column.id as TaskStatus} // Pass current column's ID as initial status
+      />
     </div>
   );
 } 
